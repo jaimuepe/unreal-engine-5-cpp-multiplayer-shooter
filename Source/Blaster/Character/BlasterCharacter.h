@@ -40,6 +40,10 @@ protected:
 	void EquipButtonPressed();
 
 	void CrouchButtonPressed();
+
+	void AimButtonPressed();
+	void AimButtonReleased();
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, meta = (AllowPrivateAccess = "true"))
 	class UOverheadWidgetComponent* OverheadWidget;
@@ -67,4 +71,6 @@ public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 
 	bool IsWeaponEquipped();
+
+	bool IsAiming();
 };
