@@ -39,6 +39,7 @@ protected:
 
 	void EquipButtonPressed();
 
+	void CrouchButtonPressed();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, meta = (AllowPrivateAccess = "true"))
 	class UOverheadWidgetComponent* OverheadWidget;

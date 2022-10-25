@@ -67,6 +67,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ABlasterCharacter::LookUp);
 
 	PlayerInputComponent->BindAction(TEXT("Equip"), IE_Pressed, this, &ABlasterCharacter::EquipButtonPressed);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &ABlasterCharacter::CrouchButtonPressed);
 }
 
 void ABlasterCharacter::PostInitializeComponents()
@@ -182,6 +183,17 @@ void ABlasterCharacter::EquipButtonPressed()
 	}
 }
 
+void ABlasterCharacter::CrouchButtonPressed()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
+	{
+		Crouch();
+	}
+}
 void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
 {
 	if (ensureAlways(Combat))

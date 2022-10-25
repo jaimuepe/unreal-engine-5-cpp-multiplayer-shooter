@@ -11,6 +11,7 @@
 UCombatComponent::UCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	SetIsReplicated(true);
 }
 
 void UCombatComponent::BeginPlay()
