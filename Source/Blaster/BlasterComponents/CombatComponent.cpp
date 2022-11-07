@@ -13,17 +13,40 @@ UCombatComponent::UCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
+
+	BaseWalkSpeed = 600.0f;
+	AimWalkSpeed = 450.0f;
 }
 
 void UCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (ensureAlways(Character))
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+	}
 }
 
 void UCombatComponent::SetIsAiming(bool bAiming)
 {
 	bIsAiming = bAiming;
 	ServerSetIsAiming(bAiming);
+
+	if (ensure(Character)) 
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? AimWalkSpeed : BaseWalkSpeed;
+	}
+}
+
+void UCombatComponent::ServerSetIsAiming_Implementation(bool bAiming)
+{
+	bIsAiming = bAiming;
+
+	if (ensure(Character))
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? AimWalkSpeed : BaseWalkSpeed;
+	}
 }
 
 void UCombatComponent::OnRep_EquippedWeapon()
@@ -33,11 +56,6 @@ void UCombatComponent::OnRep_EquippedWeapon()
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;
 	}
-}
-
-void UCombatComponent::ServerSetIsAiming_Implementation(bool bAiming)
-{
-	bIsAiming = bAiming;
 }
 
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
