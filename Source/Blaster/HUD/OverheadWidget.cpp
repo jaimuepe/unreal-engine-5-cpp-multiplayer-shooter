@@ -4,7 +4,7 @@
 #include "OverheadWidget.h"
 
 #include "Components/TextBlock.h"
-#include "GameFramework/PlayerState.h" 
+#include "GameFramework/PlayerState.h"
 
 void UOverheadWidget::SetDisplayText(FText TextToDisplay)
 {
@@ -38,8 +38,8 @@ void UOverheadWidget::ShowPlayerName(APawn* InPawn)
 	}
 }
 
-void UOverheadWidget::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
+void UOverheadWidget::NativeDestruct()
 {
 	RemoveFromParent();
-	Super::OnLevelRemovedFromWorld(InLevel, InWorld);
+	Super::NativeDestruct();
 }

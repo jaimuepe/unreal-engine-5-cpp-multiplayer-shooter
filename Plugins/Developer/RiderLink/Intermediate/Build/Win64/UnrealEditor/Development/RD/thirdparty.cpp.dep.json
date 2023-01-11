@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\jaimu\\documents\\unreal projects\\mpcourse\\blaster\\plugins\\developer\\riderlink\\source\\rd\\thirdparty\\thirdparty.cpp",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\users\\jaimu\\documents\\unreal projects\\mpcourse\\blaster\\plugins\\developer\\riderlink\\intermediate\\build\\win64\\unrealeditor\\development\\rd\\definitions.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

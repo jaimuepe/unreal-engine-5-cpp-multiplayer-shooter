@@ -29,7 +29,7 @@ public:
 protected:
 	virtual bool Initialize() override;
 
-	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
+	virtual void NativeDestruct() override;
 
 	///
 	/// Callbacks for the custom delegates
@@ -60,8 +60,8 @@ private:
 
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
-	int32 NumPublicConnections{ 4 };
-	FString SessionName{ TEXT("GameSession") };
-	FString MatchType{ TEXT("FreeForAll") };
-	FString PathToLobby{ TEXT("") };
+	int32 NumPublicConnections{4};
+	FString SessionName{TEXT("GameSession")};
+	FString MatchType{TEXT("FreeForAll")};
+	FString PathToLobby{TEXT("")};
 };
