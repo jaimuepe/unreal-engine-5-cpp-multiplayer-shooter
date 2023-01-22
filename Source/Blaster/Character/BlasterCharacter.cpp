@@ -14,6 +14,7 @@
 #include "Blaster/Weapon/Weapon.h"
 
 #include "OverheadWidgetComponent.h"
+#include "Net/UnrealNetwork.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -41,6 +42,7 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(ABlasterCharacter, UseControllerRotationYaw, COND_OwnerOnly);
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -115,7 +117,7 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 	}
 }
 
-void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
+void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon) const
 {
 	if (OverlappingWeapon)
 	{
@@ -126,6 +128,11 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 	{
 		LastWeapon->ShowPickupWidget(false);
 	}
+}
+
+void ABlasterCharacter::OnRep_UseControllerRotationYaw(const bool ControllerRotationYaw)
+{
+	bUseControllerRotationYaw = ControllerRotationYaw;
 }
 
 void ABlasterCharacter::OnRep_PlayerState()
@@ -219,17 +226,18 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 
 	FVector Velocity = GetVelocity();
 	Velocity.Z = 0.0f;
-	float Speed = Velocity.Size();
+	const float Speed = Velocity.Size();
 
-	bool bIsInAir = GetCharacterMovement()->IsFalling();
+	const bool bIsInAir = GetCharacterMovement()->IsFalling();
 
 	if (Speed == 0.0f && !bIsInAir)
 	{
 		// standing still, not jumping
-		FRotator CurrentAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
-		FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
+		const FRotator CurrentAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+		const FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(
+			CurrentAimRotation, StartingAimRotation);
 		AO_Yaw = DeltaAimRotation.Yaw;
-		bUseControllerRotationYaw = false;
+		UseControllerRotationYaw = false;
 	}
 
 	if (Speed > 0.0f || bIsInAir)
@@ -237,7 +245,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		// running or jumping
 		StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
 		AO_Yaw = 0.0f;
-		bUseControllerRotationYaw = true;
+		UseControllerRotationYaw = true;
 	}
 
 	AO_Pitch = GetBaseAimRotation().Pitch;

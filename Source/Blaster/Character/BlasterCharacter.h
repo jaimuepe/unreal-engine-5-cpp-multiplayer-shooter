@@ -64,10 +64,19 @@ private:
 	class UCombatComponent* Combat;
 
 	UFUNCTION()
-	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+	void OnRep_OverlappingWeapon(AWeapon* LastWeapon) const;
 
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
+
+	/**
+	 * @brief Use this property instead of bUseControllerRotationYaw because that one is not replicated.
+	 */
+	UPROPERTY(ReplicatedUsing = OnRep_UseControllerRotationYaw)
+	bool UseControllerRotationYaw;
+
+	UFUNCTION()
+	void OnRep_UseControllerRotationYaw(bool ControllerRotationYaw);
 
 	float AO_Yaw;
 
