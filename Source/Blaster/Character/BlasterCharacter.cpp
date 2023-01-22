@@ -6,14 +6,11 @@
 #include <Kismet/KismetMathLibrary.h>
 
 #include "Camera/CameraComponent.h"
-#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/PlayerState.h" 
 #include "GameFramework/SpringArmComponent.h"
 #include "Net/UnrealNetwork.h"
 
 #include "Blaster/BlasterComponents/CombatComponent.h"
-#include "Blaster/HUD/OverheadWidget.h"
 #include "Blaster/Weapon/Weapon.h"
 
 #include "OverheadWidgetComponent.h"
@@ -244,6 +241,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 	}
 
 	AO_Pitch = GetBaseAimRotation().Pitch;
+	if (AO_Pitch > 180.0f) AO_Pitch -= 360.0f;
 }
 
 void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
