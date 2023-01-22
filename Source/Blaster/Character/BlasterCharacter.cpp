@@ -252,12 +252,18 @@ void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
 	}
 }
 
-bool ABlasterCharacter::IsWeaponEquipped()
+bool ABlasterCharacter::IsWeaponEquipped() const
 {
 	return ensureAlways(Combat) && Combat->EquippedWeapon;
 }
 
-bool ABlasterCharacter::IsAiming()
+bool ABlasterCharacter::IsAiming() const
 {
 	return IsWeaponEquipped() && Combat->bIsAiming;
+}
+
+AWeapon* ABlasterCharacter::GetEquippedWeapon() const
+{
+	if (Combat == nullptr) return nullptr;
+	return Combat->EquippedWeapon;
 }

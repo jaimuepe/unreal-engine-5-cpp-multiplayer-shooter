@@ -78,10 +78,11 @@ private:
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 
-	bool IsWeaponEquipped();
+	bool IsWeaponEquipped() const;
 
-	bool IsAiming();
+	bool IsAiming() const;
 
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
+	FORCEINLINE AWeapon* GetEquippedWeapon() const;
 };
