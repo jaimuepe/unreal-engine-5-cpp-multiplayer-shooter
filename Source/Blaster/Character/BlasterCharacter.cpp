@@ -36,6 +36,8 @@ ABlasterCharacter::ABlasterCharacter()
 	OverheadWidget->SetupAttachment(GetRootComponent());
 
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+
+	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -220,7 +222,7 @@ void ABlasterCharacter::AimButtonReleased()
 	}
 }
 
-void ABlasterCharacter::AimOffset(float DeltaTime)
+void ABlasterCharacter::AimOffset(const float DeltaTime)
 {
 	if (!ensureAlways(Combat) || !Combat->EquippedWeapon) return;
 
@@ -238,6 +240,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 			CurrentAimRotation, StartingAimRotation);
 		AO_Yaw = DeltaAimRotation.Yaw;
 		UseControllerRotationYaw = false;
+		TurnInPlace(DeltaTime);
 	}
 
 	if (Speed > 0.0f || bIsInAir)
@@ -246,10 +249,23 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
 		AO_Yaw = 0.0f;
 		UseControllerRotationYaw = true;
+		TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	}
 
 	AO_Pitch = GetBaseAimRotation().Pitch;
 	if (AO_Pitch > 180.0f) AO_Pitch -= 360.0f;
+}
+
+void ABlasterCharacter::TurnInPlace(float DeltaTime)
+{
+	if (AO_Yaw > 90.0f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Right;
+	}
+	else if (AO_Yaw < -90.0f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Left;
+	}
 }
 
 void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
