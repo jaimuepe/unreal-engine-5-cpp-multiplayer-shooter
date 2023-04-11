@@ -21,6 +21,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void PossessedBy(AController* NewController) override;
@@ -31,6 +32,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Jump() override;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -80,7 +82,8 @@ private:
 	void OnRep_UseControllerRotationYaw(bool ControllerRotationYaw);
 
 	float AO_Yaw;
-
+	float InterpAO_Yaw;
+	
 	float AO_Pitch;
 
 	FRotator StartingAimRotation;

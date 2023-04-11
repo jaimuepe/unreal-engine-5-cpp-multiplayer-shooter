@@ -38,6 +38,9 @@ ABlasterCharacter::ABlasterCharacter()
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+
+	NetUpdateFrequency = 66.0f;
+	MinNetUpdateFrequency = 33.0f;
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -59,11 +62,24 @@ void ABlasterCharacter::Tick(float DeltaTime)
 	AimOffset(DeltaTime);
 }
 
+void ABlasterCharacter::Jump()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
+	{
+		Super::Jump();
+	}
+}
+
+
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ABlasterCharacter::Jump);
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ABlasterCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ABlasterCharacter::MoveRight);
@@ -238,8 +254,15 @@ void ABlasterCharacter::AimOffset(const float DeltaTime)
 		const FRotator CurrentAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
 		const FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(
 			CurrentAimRotation, StartingAimRotation);
+
 		AO_Yaw = DeltaAimRotation.Yaw;
-		UseControllerRotationYaw = false;
+		if (TurningInPlace == ETurningInPlace::ETIP_NotTurning)
+		{
+			InterpAO_Yaw = AO_Yaw;
+		}
+
+		UseControllerRotationYaw = true;
+		bUseControllerRotationYaw = true;
 		TurnInPlace(DeltaTime);
 	}
 
@@ -249,6 +272,7 @@ void ABlasterCharacter::AimOffset(const float DeltaTime)
 		StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
 		AO_Yaw = 0.0f;
 		UseControllerRotationYaw = true;
+		bUseControllerRotationYaw = true;
 		TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	}
 
@@ -265,6 +289,17 @@ void ABlasterCharacter::TurnInPlace(float DeltaTime)
 	else if (AO_Yaw < -90.0f)
 	{
 		TurningInPlace = ETurningInPlace::ETIP_Left;
+	}
+
+	if (TurningInPlace != ETurningInPlace::ETIP_NotTurning)
+	{
+		InterpAO_Yaw = FMath::FInterpTo(InterpAO_Yaw, 0.0f, DeltaTime, 4.0f);
+		AO_Yaw = InterpAO_Yaw;
+		if (FMath::Abs(AO_Yaw) < 15.0f)
+		{
+			TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+			StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+		}
 	}
 }
 
